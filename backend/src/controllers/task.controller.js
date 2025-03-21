@@ -21,3 +21,12 @@ export const createTask = async (req, res)=>{
         res.status(500).json({message: "Error al crear la tarea:" + error.message});
     }
 };
+/* obtener todas las tareas */
+export const getTasks = async( req, res) =>{
+    try{
+        const tasks = await Task.find();
+        res.json(tasks);
+        }catch(error){
+            res.status(50)
+        }
+}

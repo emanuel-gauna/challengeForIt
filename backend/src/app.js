@@ -3,15 +3,23 @@ import express from 'express';  // Usamos 'import' para importar 'express'
 import path from 'path';  // Usamos 'import' para importar 'path'
 import cookieParser from 'cookie-parser';  // Usamos 'import' para importar 'cookie-parser'
 import logger from 'morgan';  // Usamos 'import' para importar 'morgan'
-import mongoose from 'mongoose';  // Usamos 'import' para importar 'mongoose'
-import {DB_URI}   from './config/config.js';
-
+import cors from "cors";
+import dotenv from "dotenv";
+import connectDB from './config/db.js';
 import indexRouter from './routes/index.js';  // Usamos 'import' para importar el router de index
 import taskRouter from './routes/tasks.js';  // Usamos 'import' para importar el router de tasks
+import morgan from 'morgan';
+
+dotenv.config();
 
 const app = express();  // Creamos la aplicación Express
 
+// Conectar a MongoDB //
+connectDB();
+
 // view engine setup
+app.use(cors());
+app.use(morgan('dev'));
 app.set('views', path.join(process.cwd(), 'views'));
 app.set('view engine', 'ejs');
 
@@ -21,10 +29,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(process.cwd(), 'public')));
 
-// Conectar a MongoDB con Mongoose
-mongoose.connect(DB_URI)
-  .then(() => console.log('Conectado a MongoDB'))
-  .catch((err) => console.error('Error de conexión:', err));
+
+
 
 /* rutas */
 app.use('/', indexRouter);

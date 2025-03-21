@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-import app from '../app.js';  // Usamos 'import' para importar 'app'
+import app from '../src/app.js';  // Usamos 'import' para importar 'app'
 import debug from 'debug';    // Importamos el módulo 'debug'
 import http from 'http';      // Importamos el módulo 'http'
 
