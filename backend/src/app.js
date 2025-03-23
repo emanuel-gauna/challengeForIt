@@ -7,8 +7,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from './config/db.js';
 import indexRouter from './routes/index.js';  // Usamos 'import' para importar el router de index
-import taskRouter from './routes/tasks.js';  // Usamos 'import' para importar el router de tasks
+import taskRouter from './routes/tasksRoutes.js';  // Usamos 'import' para importar el router de tasks
 import morgan from 'morgan';
+
+const port = process.env.PORT || 5000;
 
 dotenv.config();
 
@@ -34,7 +36,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
 /* rutas */
 app.use('/', indexRouter);
-app.use(taskRouter);
+app.use("/api", taskRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -50,6 +52,10 @@ app.use((err, req, res, next) => {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+app.listen(port, () => {
+  console.log(`Servidor en ejecución en el puerto ${port}`);
 });
 
 export default app;  // Usamos 'export default' para exportar la app
