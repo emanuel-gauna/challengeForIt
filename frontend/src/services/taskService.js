@@ -73,7 +73,7 @@ export const updateTask = async (id, task)=>{
 export const deleteTask = async (id) => {
     try {
       // Realizar una solicitud DELETE a la API para eliminar la tarea por su id
-      const response = await fetch(`${API_URL}}/${id}`, {
+      const response = await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
       });
   
