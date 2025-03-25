@@ -8,11 +8,11 @@ export const sendCreated = (res, message = "Recurso creado con éxito", data = n
     });
   };
   
-  export const sendSuccess = (res,  message = "Operación exitosa", data) => {
+  export const sendSuccess = (res, data, message = "Operación exitosa") => {
     return res.status(200).json({
       status: 200,
-      message,
-      data
+      message: message,
+      data: data
     });
   };
   

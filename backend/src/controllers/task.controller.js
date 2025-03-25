@@ -47,7 +47,7 @@ export const getTaskById = async(req, res)=>{
         if(!task){
             return sendNotFound(res, "Tarea no encontrada");
         }
-        sendSuccess(res, task, "tarea obtenida con exito");
+        sendSuccess(res, task , "tarea obtenida con exito");
     } catch (error) {
         sendServerError(res, "Error al obtener la tarea", error.message, );
     }
