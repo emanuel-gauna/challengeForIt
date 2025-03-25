@@ -5,8 +5,7 @@ import TaskForm from "./components/TaskForm";
 
 function App() {
     return(
-        <h1>Hola Mundo!</h1>
-       /*  <Router>
+        <Router>
             <div>
                 <h1>Task Manager</h1>
                 <Routes>
@@ -15,7 +14,7 @@ function App() {
                     <Route path="/task/edit/:id" element={<TaskForm/>} />
                 </Routes>
             </div>
-        </Router> */
+        </Router>
     );
 }
 

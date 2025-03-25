@@ -1,35 +1,56 @@
-/* componente de todas las tareas */
-import React, {useEffect, useState} from "react";
-import {fethTasks} from "../services/taskService";
-import TaskItem from "./TaskItem";
+// src/components/TaskList.jsx
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { fetchTasks, deleteTask } from "../services/taskService";
 
 function TaskList() {
-    const [task, setTask] = useState([]);
-    const [error, setError] = useState(null);
+  const [tasks, setTasks] = useState([]);
 
-    useEffect(() =>{
-        const getTask = async () =>{
-            try {
-                const data = await fethTasks();
-                setTask(data);
-        } catch (error){
-            setError("Hubo un problema al cargar las tareas", error);
-        }
-};
-getTask();
-}, []);
+  // Cargar las tareas
+  useEffect(() => {
+    const getTasks = async () => {
+      const data = await fetchTasks();
+      setTasks(data);
+    };
+    getTasks();
+  }, []);
 
-return (
+  // Eliminar tarea
+  const handleDelete = async (id) => {
+    try {
+      await deleteTask(id);  // Llamada al servicio para eliminar la tarea
+      setTasks(tasks.filter((task) => task._id !== id)); // Actualizar el estado después de la eliminación
+    } catch (error) {
+      console.error("No se pudo eliminar la tarea", error);
+    }
+  };
+
+  return (
     <div>
-        <h2>Lista de Tareas</h2>
-        {error && <p style={{color:"red"}}>{error}</p>}
-        {task.length < 0 ? (
-            task.map((task) => <TaskItem key={task._id} task={task} />)
-        ): (
-            <p>No hay tareas disponibles.</p>
-        )}
+      <h2>Lista de Tareas</h2>
+      <ul>
+        {tasks.map((task) => (
+          <li key={task._id}>
+            <h3>{task.title}</h3>
+            <p>{task.description}</p>
+            <label>
+              <input type="checkbox" checked={task.completed} readOnly />
+              Completada
+            </label>
+            <div>
+              <Link to={`/task/edit/${task._id}`}>
+                <button>Editar</button>
+              </Link>
+              <button onClick={() => handleDelete(task._id)}>Eliminar</button>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <Link to="/new-task">
+        <button>Crear Nueva Tarea</button>
+      </Link>
     </div>
-)
+  );
 }
 
-export default TaskList
+export default TaskList;

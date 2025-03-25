@@ -6,34 +6,54 @@ import { createTask, updateTask, fetchTaskById } from "../services/taskService";
 function TaskForm() {
   const [task, setTask] = useState({ title: "", description: "", completed: false });
   const [error, setError] = useState(null); // Para manejar errores
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); // Estado de carga
+  const { id } = useParams(); // Obtener el id de la URL
+  const navigate = useNavigate(); // Usar navigate para redirigir
 
+  // Cargar la tarea si estamos en modo edición
   useEffect(() => {
     if (id) {
       const getTask = async () => {
         try {
+          setLoading(true);
           const data = await fetchTaskById(id);
-          setTask(data);
+          if (data) {
+            setTask(data); // Establecer los datos de la tarea
+          } else {
+            setError("La tarea no existe.");
+          }
         } catch (error) {
-          setError("Hubo un problema al cargar la tarea." , error);
+          setError("Hubo un problema al cargar la tarea.", error);
+        } finally {
+          setLoading(false);
         }
       };
       getTask();
     }
   }, [id]);
 
+  // Manejo de la creación y edición de la tarea
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevenir la recarga de la página
+
+    // Validación de campos obligatorios
+    if (!task.title || !task.description) {
+      setError("El título y la descripción son obligatorios.");
+      return;
+    }
+
     try {
+      setLoading(true);
       if (id) {
-        await updateTask(id, task);
+        await updateTask(id, task); // Actualizar la tarea si estamos en edición
       } else {
-        await createTask(task);
+        await createTask(task); // Crear una nueva tarea si no hay id
       }
-      navigate("/");
+      navigate("/"); // Redirigir a la lista de tareas después de guardar
     } catch (error) {
       setError("Hubo un problema al guardar la tarea.", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,7 +63,7 @@ function TaskForm() {
       {error && <p style={{ color: "red" }}>{error}</p>} {/* Mostrar el error */}
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Title:</label>
+          <label>Título:</label>
           <input
             type="text"
             value={task.title}
@@ -51,7 +71,7 @@ function TaskForm() {
           />
         </div>
         <div>
-          <label>Description:</label>
+          <label>Descripción:</label>
           <textarea
             value={task.description}
             onChange={(e) => setTask({ ...task, description: e.target.value })}
@@ -59,7 +79,7 @@ function TaskForm() {
         </div>
         <div>
           <label>
-            Completed:
+            Completado:
             <input
               type="checkbox"
               checked={task.completed}
@@ -67,8 +87,11 @@ function TaskForm() {
             />
           </label>
         </div>
-        <button type="submit">{id ? "Actualizar" : "Crear"}</button>
+        <button type="submit" disabled={loading}>
+          {id ? "Actualizar" : "Crear"}
+        </button>
       </form>
+      {loading && <p>Cargando...</p>} {/* Mostrar mensaje de carga */}
     </div>
   );
 }
